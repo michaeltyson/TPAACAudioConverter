@@ -1,0 +1,306 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		278EC9211347D0E600E4253C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 278EC9201347D0E600E4253C /* UIKit.framework */; };
+		278EC9231347D0E700E4253C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 278EC9221347D0E700E4253C /* Foundation.framework */; };
+		278EC9251347D0E700E4253C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 278EC9241347D0E700E4253C /* CoreGraphics.framework */; };
+		278EC92B1347D0E700E4253C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 278EC9291347D0E700E4253C /* InfoPlist.strings */; };
+		278EC92E1347D0E700E4253C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 278EC92D1347D0E700E4253C /* main.m */; };
+		278EC9311347D0E800E4253C /* AACConverterAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 278EC9301347D0E800E4253C /* AACConverterAppDelegate.m */; };
+		278EC9341347D0E800E4253C /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 278EC9321347D0E800E4253C /* MainWindow.xib */; };
+		278EC9371347D0E800E4253C /* AACConverterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 278EC9361347D0E800E4253C /* AACConverterViewController.m */; };
+		278EC93A1347D0E800E4253C /* AACConverterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 278EC9381347D0E800E4253C /* AACConverterViewController.xib */; };
+		278EC9441347D1C000E4253C /* audio.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 278EC9431347D1C000E4253C /* audio.aiff */; };
+		278EC9461347D26600E4253C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 278EC9451347D26600E4253C /* AudioToolbox.framework */; };
+		278EC9481347D27200E4253C /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 278EC9471347D27200E4253C /* MessageUI.framework */; };
+		278EC94A1347D28700E4253C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 278EC9491347D28700E4253C /* AVFoundation.framework */; };
+		4CDAB87614004F18003DC23B /* TPAACAudioConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CDAB87514004F18003DC23B /* TPAACAudioConverter.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		278EC91C1347D0E600E4253C /* AACConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AACConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		278EC9201347D0E600E4253C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		278EC9221347D0E700E4253C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		278EC9241347D0E700E4253C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		278EC9281347D0E700E4253C /* AACConverter-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AACConverter-Info.plist"; sourceTree = "<group>"; };
+		278EC92A1347D0E700E4253C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		278EC92C1347D0E700E4253C /* AACConverter-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AACConverter-Prefix.pch"; sourceTree = "<group>"; };
+		278EC92D1347D0E700E4253C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		278EC92F1347D0E700E4253C /* AACConverterAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AACConverterAppDelegate.h; sourceTree = "<group>"; };
+		278EC9301347D0E800E4253C /* AACConverterAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AACConverterAppDelegate.m; sourceTree = "<group>"; };
+		278EC9331347D0E800E4253C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		278EC9351347D0E800E4253C /* AACConverterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AACConverterViewController.h; sourceTree = "<group>"; };
+		278EC9361347D0E800E4253C /* AACConverterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AACConverterViewController.m; sourceTree = "<group>"; };
+		278EC9391347D0E800E4253C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/AACConverterViewController.xib; sourceTree = "<group>"; };
+		278EC9431347D1C000E4253C /* audio.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = audio.aiff; sourceTree = "<group>"; };
+		278EC9451347D26600E4253C /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		278EC9471347D27200E4253C /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		278EC9491347D28700E4253C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		4CDAB87414004F18003DC23B /* TPAACAudioConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAACAudioConverter.h; sourceTree = SOURCE_ROOT; };
+		4CDAB87514004F18003DC23B /* TPAACAudioConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAACAudioConverter.m; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		278EC9191347D0E600E4253C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				278EC9211347D0E600E4253C /* UIKit.framework in Frameworks */,
+				278EC9231347D0E700E4253C /* Foundation.framework in Frameworks */,
+				278EC9251347D0E700E4253C /* CoreGraphics.framework in Frameworks */,
+				278EC9461347D26600E4253C /* AudioToolbox.framework in Frameworks */,
+				278EC9481347D27200E4253C /* MessageUI.framework in Frameworks */,
+				278EC94A1347D28700E4253C /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		278EC9111347D0E500E4253C = {
+			isa = PBXGroup;
+			children = (
+				278EC9261347D0E700E4253C /* AACConverter */,
+				278EC91F1347D0E600E4253C /* Frameworks */,
+				278EC91D1347D0E600E4253C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		278EC91D1347D0E600E4253C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				278EC91C1347D0E600E4253C /* AACConverter.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		278EC91F1347D0E600E4253C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				278EC9491347D28700E4253C /* AVFoundation.framework */,
+				278EC9471347D27200E4253C /* MessageUI.framework */,
+				278EC9451347D26600E4253C /* AudioToolbox.framework */,
+				278EC9201347D0E600E4253C /* UIKit.framework */,
+				278EC9221347D0E700E4253C /* Foundation.framework */,
+				278EC9241347D0E700E4253C /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		278EC9261347D0E700E4253C /* AACConverter */ = {
+			isa = PBXGroup;
+			children = (
+				4CDAB87414004F18003DC23B /* TPAACAudioConverter.h */,
+				4CDAB87514004F18003DC23B /* TPAACAudioConverter.m */,
+				278EC92F1347D0E700E4253C /* AACConverterAppDelegate.h */,
+				278EC9301347D0E800E4253C /* AACConverterAppDelegate.m */,
+				278EC9321347D0E800E4253C /* MainWindow.xib */,
+				278EC9351347D0E800E4253C /* AACConverterViewController.h */,
+				278EC9361347D0E800E4253C /* AACConverterViewController.m */,
+				278EC9381347D0E800E4253C /* AACConverterViewController.xib */,
+				278EC9271347D0E700E4253C /* Supporting Files */,
+			);
+			path = AACConverter;
+			sourceTree = "<group>";
+		};
+		278EC9271347D0E700E4253C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				278EC9281347D0E700E4253C /* AACConverter-Info.plist */,
+				278EC9291347D0E700E4253C /* InfoPlist.strings */,
+				278EC92C1347D0E700E4253C /* AACConverter-Prefix.pch */,
+				278EC92D1347D0E700E4253C /* main.m */,
+				278EC9431347D1C000E4253C /* audio.aiff */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		278EC91B1347D0E600E4253C /* AACConverter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 278EC93D1347D0E800E4253C /* Build configuration list for PBXNativeTarget "AACConverter" */;
+			buildPhases = (
+				278EC9181347D0E600E4253C /* Sources */,
+				278EC9191347D0E600E4253C /* Frameworks */,
+				278EC91A1347D0E600E4253C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AACConverter;
+			productName = AACConverter;
+			productReference = 278EC91C1347D0E600E4253C /* AACConverter.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		278EC9131347D0E600E4253C /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 278EC9161347D0E600E4253C /* Build configuration list for PBXProject "AACConverter" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 278EC9111347D0E500E4253C;
+			productRefGroup = 278EC91D1347D0E600E4253C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				278EC91B1347D0E600E4253C /* AACConverter */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		278EC91A1347D0E600E4253C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				278EC92B1347D0E700E4253C /* InfoPlist.strings in Resources */,
+				278EC9341347D0E800E4253C /* MainWindow.xib in Resources */,
+				278EC93A1347D0E800E4253C /* AACConverterViewController.xib in Resources */,
+				278EC9441347D1C000E4253C /* audio.aiff in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		278EC9181347D0E600E4253C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				278EC92E1347D0E700E4253C /* main.m in Sources */,
+				278EC9311347D0E800E4253C /* AACConverterAppDelegate.m in Sources */,
+				278EC9371347D0E800E4253C /* AACConverterViewController.m in Sources */,
+				4CDAB87614004F18003DC23B /* TPAACAudioConverter.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		278EC9291347D0E700E4253C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				278EC92A1347D0E700E4253C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		278EC9321347D0E800E4253C /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				278EC9331347D0E800E4253C /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		278EC9381347D0E800E4253C /* AACConverterViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				278EC9391347D0E800E4253C /* en */,
+			);
+			name = AACConverterViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		278EC93B1347D0E800E4253C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		278EC93C1347D0E800E4253C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		278EC93E1347D0E800E4253C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AACConverter/AACConverter-Prefix.pch";
+				INFOPLIST_FILE = "AACConverter/AACConverter-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		278EC93F1347D0E800E4253C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AACConverter/AACConverter-Prefix.pch";
+				INFOPLIST_FILE = "AACConverter/AACConverter-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		278EC9161347D0E600E4253C /* Build configuration list for PBXProject "AACConverter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				278EC93B1347D0E800E4253C /* Debug */,
+				278EC93C1347D0E800E4253C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		278EC93D1347D0E800E4253C /* Build configuration list for PBXNativeTarget "AACConverter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				278EC93E1347D0E800E4253C /* Debug */,
+				278EC93F1347D0E800E4253C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 278EC9131347D0E600E4253C /* Project object */;
+}
