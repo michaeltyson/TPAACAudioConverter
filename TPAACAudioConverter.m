@@ -25,8 +25,10 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     return YES;
 }
 
+#if !TARGET_IPHONE_SIMULATOR
 static BOOL _available;
 static BOOL _available_set = NO;
+#endif
 
 @interface TPAACAudioConverter ()
 @property (nonatomic, readwrite, retain) NSString *source;
@@ -38,6 +40,9 @@ static BOOL _available_set = NO;
 @synthesize source, destination, dataSource, audioFormat;
 
 + (BOOL)AACConverterAvailable {
+#if TARGET_IPHONE_SIMULATOR
+    return YES;
+#else
     if ( _available_set ) return _available;
     
     // get an array of AudioClassDescriptions for all installed encoders for the given format 
@@ -69,6 +74,7 @@ static BOOL _available_set = NO;
     _available_set = YES;
     _available = NO;
     return NO;
+#endif
 }
 
 - (id)initWithDelegate:(id<TPAACAudioConverterDelegate>)_delegate source:(NSString*)sourcePath destination:(NSString*)destinationPath {
