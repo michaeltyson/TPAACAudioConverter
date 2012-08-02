@@ -19,20 +19,8 @@ enum {
 
 @protocol TPAACAudioConverterDelegate;
 @protocol TPAACAudioConverterDataSource;
-@interface TPAACAudioConverter : NSObject {
-    id<TPAACAudioConverterDelegate> delegate;
-    id<TPAACAudioConverterDataSource> dataSource;
-    NSString *source;
-    NSString *destination;
-    AudioStreamBasicDescription audioFormat;
-    
-    @private
-    BOOL processing;
-    BOOL cancelled;
-    BOOL interrupted;
-    NSCondition *condition;
-    UInt32 priorMixOverrideValue;
-}
+
+@interface TPAACAudioConverter : NSObject
 
 + (BOOL)AACConverterAvailable;
 
