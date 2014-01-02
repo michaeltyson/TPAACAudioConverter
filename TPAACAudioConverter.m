@@ -69,7 +69,7 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     }
     
     for (UInt32 i=0; i < numEncoders; ++i) {
-        if ( encoderDescriptions[i].mSubType == kAudioFormatMPEG4AAC && encoderDescriptions[i].mManufacturer == kAppleHardwareAudioCodecManufacturer ) {
+        if ( encoderDescriptions[i].mSubType == kAudioFormatMPEG4AAC  ) {
             available_set = YES;
             available = YES;
             return YES;
