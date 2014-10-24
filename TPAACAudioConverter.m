@@ -15,7 +15,6 @@ NSString * TPAACAudioConverterDidRestoreAudioSessionCategoryNotification = @"TPA
 NSString * TPAACAudioConverterErrorDomain = @"com.atastypixel.TPAACAudioConverterErrorDomain";
 
 
-#define checkResult(result,operation) (_checkResultLite((result),(operation),__FILE__,__LINE__))
 
 static inline BOOL _checkResultLite(OSStatus result, const char *operation, const char* file, int line) {
     if ( result != noErr ) {
@@ -107,12 +106,10 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
 }
 
 - (void)dealloc {
-    [_condition release];
     self.source = nil;
     self.destination = nil;
     self.delegate = nil;
     self.dataSource = nil;
-    [super dealloc];
 }
 
 -(void)start {
@@ -128,7 +125,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     
     _cancelled = NO;
     _processing = YES;
-    [self retain];
     [self performSelectorInBackground:@selector(processingThread) withObject:nil];
 }
 
@@ -142,7 +138,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
         checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
                     "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
     }
-    [self autorelease];
 }
 
 - (void)interrupt {
@@ -171,7 +166,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
         checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
                     "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
     }
-    [self autorelease];
 }
 
 - (void)reportErrorAndCleanup:(NSError*)error {
@@ -182,25 +176,25 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
         checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
                     "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
     }
-    [self autorelease];
     [_delegate AACAudioConverter:self didFailWithError:error];
 }
 
 - (void)processingThread {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     [[NSThread currentThread] setThreadPriority:0.9];
     
     ExtAudioFileRef sourceFile = NULL;
     AudioStreamBasicDescription sourceFormat;
+    NSLog(@"Opening path for compression %@: ", [NSURL fileURLWithPath:_source]);
     if ( _source ) {
-        if ( !checkResult(ExtAudioFileOpenURL((CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile), "ExtAudioFileOpenURL") ) {
+        checkResult( ExtAudioFileOpenURL((__bridge CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile) , "ExtAudioFileOpenURL");
+        
+        if ( !checkResult( ExtAudioFileOpenURL((__bridge CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile) , "ExtAudioFileOpenURL") ) {
             [self performSelectorOnMainThread:@selector(reportErrorAndCleanup:)
                                    withObject:[NSError errorWithDomain:TPAACAudioConverterErrorDomain
                                                                   code:TPAACAudioConverterFileError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't open the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -214,7 +208,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                   code:TPAACAudioConverterFormatError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't read the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -234,19 +227,17 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                               code:TPAACAudioConverterFormatError
                                                           userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't setup destination format", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
-        [pool release];
         _processing = NO;
         return;
     }
     
     ExtAudioFileRef destinationFile;
-    if ( !checkResult(ExtAudioFileCreateWithURL((CFURLRef)[NSURL fileURLWithPath:_destination], kAudioFileM4AType, &destinationFormat, NULL, kAudioFileFlags_EraseFile, &destinationFile), "ExtAudioFileCreateWithURL") ) {
+    if ( !checkResult(ExtAudioFileCreateWithURL((__bridge CFURLRef)[NSURL fileURLWithPath:_destination], kAudioFileM4AType, &destinationFormat, NULL, kAudioFileFlags_EraseFile, &destinationFile), "ExtAudioFileCreateWithURL") ) {
         [self performSelectorOnMainThread:@selector(reportErrorAndCleanup:)
                                withObject:[NSError errorWithDomain:TPAACAudioConverterErrorDomain
                                                               code:TPAACAudioConverterFileError
                                                           userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't open the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
-        [pool release];
         _processing = NO;
         return;
     }
@@ -278,7 +269,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                               code:TPAACAudioConverterFormatError
                                                           userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't setup intermediate conversion format", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
-        [pool release];
         _processing = NO;
         return;
     }
@@ -326,7 +316,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                       code:TPAACAudioConverterFormatError
                                                                   userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Error reading the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                     waitUntilDone:NO];
-                [pool release];
                 _processing = NO;
                 return;
             }
@@ -358,7 +347,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                   code:TPAACAudioConverterUnrecoverableInterruptionError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Interrupted", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -399,7 +387,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                   code:TPAACAudioConverterFormatError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Error writing the destination file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -421,7 +408,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     
     _processing = NO;
     
-    [pool release];
 }
 
 @end
