@@ -19,7 +19,6 @@ enum {
 
 @protocol TPAACAudioConverterDelegate;
 @protocol TPAACAudioConverterDataSource;
-#define checkResult(result,operation) (_checkResultLite((result),(operation),__FILE__,__LINE__))
 
 @interface TPAACAudioConverter : NSObject
 

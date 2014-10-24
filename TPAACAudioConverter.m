@@ -23,6 +23,7 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     }
     return YES;
 }
+#define checkResult(result,operation) (_checkResultLite((result),(operation),__FILE__,__LINE__))
 
 @interface TPAACAudioConverter ()  {
     BOOL            _processing;
@@ -187,8 +188,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     AudioStreamBasicDescription sourceFormat;
     NSLog(@"Opening path for compression %@: ", [NSURL fileURLWithPath:_source]);
     if ( _source ) {
-        checkResult( ExtAudioFileOpenURL((__bridge CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile) , "ExtAudioFileOpenURL");
-        
         if ( !checkResult( ExtAudioFileOpenURL((__bridge CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile) , "ExtAudioFileOpenURL") ) {
             [self performSelectorOnMainThread:@selector(reportErrorAndCleanup:)
                                    withObject:[NSError errorWithDomain:TPAACAudioConverterErrorDomain
