@@ -32,8 +32,8 @@ enum {
 - (void)interrupt;
 - (void)resume;
 
-@property (nonatomic, readonly, retain) NSString *source;
-@property (nonatomic, readonly, retain) NSString *destination;
+@property (nonatomic, readonly, strong) NSString *source;
+@property (nonatomic, readonly, strong) NSString *destination;
 @property (nonatomic, readonly) AudioStreamBasicDescription audioFormat;
 @end
 

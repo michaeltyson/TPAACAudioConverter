@@ -7,13 +7,16 @@
 
 #import "TPAACAudioConverter.h"
 #import <AudioToolbox/AudioToolbox.h>
+#import <AVFoundation/AVFoundation.h>
+
+#if !__has_feature(objc_arc)
+#error This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
+#endif
 
 NSString * TPAACAudioConverterWillSwitchAudioSessionCategoryNotification = @"TPAACAudioConverterWillSwitchAudioSessionCategoryNotification";
 NSString * TPAACAudioConverterDidRestoreAudioSessionCategoryNotification = @"TPAACAudioConverterDidRestoreAudioSessionCategoryNotification";
 
-
 NSString * TPAACAudioConverterErrorDomain = @"com.atastypixel.TPAACAudioConverterErrorDomain";
-
 
 #define checkResult(result,operation) (_checkResultLite((result),(operation),__FILE__,__LINE__))
 
@@ -29,17 +32,16 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     BOOL            _processing;
     BOOL            _cancelled;
     BOOL            _interrupted;
-    NSCondition    *_condition;
-    UInt32          _priorMixOverrideValue;
+    AVAudioSessionCategoryOptions _priorCategoryOptions;
 }
-@property (nonatomic, readwrite, retain) NSString *source;
-@property (nonatomic, readwrite, retain) NSString *destination;
+@property (nonatomic, readwrite, strong) NSString *source;
+@property (nonatomic, readwrite, strong) NSString *destination;
 @property (nonatomic, assign) id<TPAACAudioConverterDelegate> delegate;
-@property (nonatomic, retain) id<TPAACAudioConverterDataSource> dataSource;
+@property (nonatomic, strong) id<TPAACAudioConverterDataSource> dataSource;
+@property (nonatomic, strong) NSCondition *condition;
 @end
 
 @implementation TPAACAudioConverter
-@synthesize source = _source, destination = _destination, delegate = _delegate, dataSource = _dataSource, audioFormat = _audioFormat;
 
 + (BOOL)AACConverterAvailable {
 #if TARGET_IPHONE_SIMULATOR
@@ -69,7 +71,7 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     }
     
     for (UInt32 i=0; i < numEncoders; ++i) {
-        if ( encoderDescriptions[i].mSubType == kAudioFormatMPEG4AAC  ) {
+        if ( encoderDescriptions[i].mSubType == kAudioFormatMPEG4AAC ) {
             available_set = YES;
             available = YES;
             return YES;
@@ -106,29 +108,22 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     return self;
 }
 
-- (void)dealloc {
-    [_condition release];
-    self.source = nil;
-    self.destination = nil;
-    self.delegate = nil;
-    self.dataSource = nil;
-    [super dealloc];
-}
-
 -(void)start {
-    UInt32 size = sizeof(_priorMixOverrideValue);
-    checkResult(AudioSessionGetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, &size, &_priorMixOverrideValue), 
-                "AudioSessionGetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     
-    if ( _priorMixOverrideValue != NO ) {
-        UInt32 allowMixing = NO;
-        checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
-                    "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
+    _priorCategoryOptions = audioSession.categoryOptions;
+    
+    if ( _priorCategoryOptions & AVAudioSessionCategoryOptionMixWithOthers ) {
+        NSError *error = nil;
+        if ( ![audioSession setCategory:audioSession.category
+                            withOptions:_priorCategoryOptions & ~AVAudioSessionCategoryOptionMixWithOthers
+                                  error:&error] ) {
+            NSLog(@"Couldn't disable mix with others Audio Session option for AAC conversion: %@", error.localizedDescription);
+        }
     }
     
     _cancelled = NO;
     _processing = YES;
-    [self retain];
     [self performSelectorInBackground:@selector(processingThread) withObject:nil];
 }
 
@@ -137,12 +132,14 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     while ( _processing ) {
         [NSThread sleepForTimeInterval:0.01];
     }
-    if ( _priorMixOverrideValue != NO ) {
-        UInt32 allowMixing = _priorMixOverrideValue;
-        checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
-                    "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
+    if ( _priorCategoryOptions & AVAudioSessionCategoryOptionMixWithOthers ) {
+        NSError *error = nil;
+        if ( ![[AVAudioSession sharedInstance] setCategory:[AVAudioSession sharedInstance].category
+                                               withOptions:_priorCategoryOptions
+                                                     error:&error] ) {
+            NSLog(@"Couldn't reinstate Audio Session options for AAC conversion: %@", error.localizedDescription);
+        }
     }
-    [self autorelease];
 }
 
 - (void)interrupt {
@@ -166,41 +163,42 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
 - (void)reportCompletion {
     if ( _cancelled ) return;
     [_delegate AACAudioConverterDidFinishConversion:self];
-    if ( _priorMixOverrideValue != NO ) {
-        UInt32 allowMixing = _priorMixOverrideValue;
-        checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
-                    "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
+    if ( _priorCategoryOptions & AVAudioSessionCategoryOptionMixWithOthers ) {
+        NSError *error = nil;
+        if ( ![[AVAudioSession sharedInstance] setCategory:[AVAudioSession sharedInstance].category
+                                               withOptions:_priorCategoryOptions
+                                                     error:&error] ) {
+            NSLog(@"Couldn't reinstate Audio Session options for AAC conversion: %@", error.localizedDescription);
+        }
     }
-    [self autorelease];
 }
 
 - (void)reportErrorAndCleanup:(NSError*)error {
     if ( _cancelled ) return;
     [[NSFileManager defaultManager] removeItemAtPath:_destination error:NULL];
-    if ( _priorMixOverrideValue != NO ) {
-        UInt32 allowMixing = _priorMixOverrideValue;
-        checkResult(AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers, sizeof (allowMixing), &allowMixing),
-                    "AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryMixWithOthers)");
+    if ( _priorCategoryOptions & AVAudioSessionCategoryOptionMixWithOthers ) {
+        NSError *error = nil;
+        if ( ![[AVAudioSession sharedInstance] setCategory:[AVAudioSession sharedInstance].category
+                                               withOptions:_priorCategoryOptions
+                                                     error:&error] ) {
+            NSLog(@"Couldn't reinstate Audio Session options for AAC conversion: %@", error.localizedDescription);
+        }
     }
-    [self autorelease];
     [_delegate AACAudioConverter:self didFailWithError:error];
 }
 
 - (void)processingThread {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
     [[NSThread currentThread] setThreadPriority:0.9];
     
     ExtAudioFileRef sourceFile = NULL;
     AudioStreamBasicDescription sourceFormat;
     if ( _source ) {
-        if ( !checkResult(ExtAudioFileOpenURL((CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile), "ExtAudioFileOpenURL") ) {
+        if ( !checkResult(ExtAudioFileOpenURL((__bridge CFURLRef)[NSURL fileURLWithPath:_source], &sourceFile), "ExtAudioFileOpenURL") ) {
             [self performSelectorOnMainThread:@selector(reportErrorAndCleanup:)
                                    withObject:[NSError errorWithDomain:TPAACAudioConverterErrorDomain
                                                                   code:TPAACAudioConverterFileError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't open the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -214,7 +212,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                   code:TPAACAudioConverterFormatError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't read the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -234,19 +231,22 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                               code:TPAACAudioConverterFormatError
                                                           userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't setup destination format", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
-        [pool release];
         _processing = NO;
         return;
     }
     
     ExtAudioFileRef destinationFile;
-    if ( !checkResult(ExtAudioFileCreateWithURL((CFURLRef)[NSURL fileURLWithPath:_destination], kAudioFileM4AType, &destinationFormat, NULL, kAudioFileFlags_EraseFile, &destinationFile), "ExtAudioFileCreateWithURL") ) {
+    if ( !checkResult(ExtAudioFileCreateWithURL((__bridge CFURLRef)[NSURL fileURLWithPath:_destination],
+                                                kAudioFileM4AType,
+                                                &destinationFormat,
+                                                NULL,
+                                                kAudioFileFlags_EraseFile,
+                                                &destinationFile), "ExtAudioFileCreateWithURL") ) {
         [self performSelectorOnMainThread:@selector(reportErrorAndCleanup:)
                                withObject:[NSError errorWithDomain:TPAACAudioConverterErrorDomain
                                                               code:TPAACAudioConverterFileError
                                                           userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't open the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
-        [pool release];
         _processing = NO;
         return;
     }
@@ -256,14 +256,14 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
         clientFormat = sourceFormat;
     } else {
         memset(&clientFormat, 0, sizeof(clientFormat));
-        int sampleSize = sizeof(AudioSampleType);
-        clientFormat.mFormatID = kAudioFormatLinearPCM;
-        clientFormat.mFormatFlags = kAudioFormatFlagsCanonical;
-        clientFormat.mBitsPerChannel = 8 * sampleSize;
-        clientFormat.mChannelsPerFrame = sourceFormat.mChannelsPerFrame;
-        clientFormat.mFramesPerPacket = 1;
-        clientFormat.mBytesPerPacket = clientFormat.mBytesPerFrame = sourceFormat.mChannelsPerFrame * sampleSize;
-        clientFormat.mSampleRate = sourceFormat.mSampleRate;
+        clientFormat.mFormatID          = kAudioFormatLinearPCM;
+        clientFormat.mFormatFlags       = kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved;
+        clientFormat.mChannelsPerFrame  = sourceFormat.mChannelsPerFrame;
+        clientFormat.mBytesPerPacket    = sizeof(float);
+        clientFormat.mFramesPerPacket   = 1;
+        clientFormat.mBytesPerFrame     = sizeof(float);
+        clientFormat.mBitsPerChannel    = 8 * sizeof(float);
+        clientFormat.mSampleRate        = sourceFormat.mSampleRate;
     }
     
     size = sizeof(clientFormat);
@@ -278,7 +278,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                               code:TPAACAudioConverterFormatError
                                                           userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't setup intermediate conversion format", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
-        [pool release];
         _processing = NO;
         return;
     }
@@ -290,8 +289,7 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                       "ExtAudioFileGetProperty(kExtAudioFileProperty_AudioConverter;)") ) {
         UInt32 canResume = 0;
         size = sizeof(canResume);
-        if ( checkResult(AudioConverterGetProperty(converter, kAudioConverterPropertyCanResumeFromInterruption, &size, &canResume), 
-                         "AudioConverterGetProperty(kAudioConverterPropertyCanResumeFromInterruption") ) {
+        if ( AudioConverterGetProperty(converter, kAudioConverterPropertyCanResumeFromInterruption, &size, &canResume) == noErr ) {
             canResumeFromInterruption = (BOOL)canResume;
         }
     }
@@ -326,7 +324,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                       code:TPAACAudioConverterFormatError
                                                                   userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Error reading the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                     waitUntilDone:NO];
-                [pool release];
                 _processing = NO;
                 return;
             }
@@ -358,7 +355,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                   code:TPAACAudioConverterUnrecoverableInterruptionError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Interrupted", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -399,7 +395,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
                                                                   code:TPAACAudioConverterFormatError
                                                               userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Error writing the destination file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                                 waitUntilDone:NO];
-            [pool release];
             _processing = NO;
             return;
         }
@@ -420,8 +415,6 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
     }
     
     _processing = NO;
-    
-    [pool release];
 }
 
 @end

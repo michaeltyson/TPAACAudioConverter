@@ -11,25 +11,15 @@
 #import "TPAACAudioConverter.h"
 
 @class AVAudioPlayer;
-@interface AACConverterViewController : UIViewController <TPAACAudioConverterDelegate, MFMailComposeViewControllerDelegate> {
-    UIButton *convertButton;
-    UIButton *playConvertedButton;
-    UIButton *emailConvertedButton;
-    UIProgressView *progressView;
-    UIActivityIndicatorView *spinner;
-    
-    AVAudioPlayer *audioPlayer;
-    TPAACAudioConverter *audioConverter;
-}
-
+@interface AACConverterViewController : UIViewController <TPAACAudioConverterDelegate, MFMailComposeViewControllerDelegate>
 - (IBAction)playOriginal:(id)sender;
 - (IBAction)convert:(id)sender;
 - (IBAction)playConverted:(id)sender;
 - (IBAction)emailConverted:(id)sender;
 
-@property (nonatomic, retain) IBOutlet UIButton *convertButton;
-@property (nonatomic, retain) IBOutlet UIButton *playConvertedButton;
-@property (nonatomic, retain) IBOutlet UIButton *emailConvertedButton;
-@property (nonatomic, retain) IBOutlet UIProgressView *progressView;
-@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *spinner;
+@property (nonatomic, strong) IBOutlet UIButton *convertButton;
+@property (nonatomic, strong) IBOutlet UIButton *playConvertedButton;
+@property (nonatomic, strong) IBOutlet UIButton *emailConvertedButton;
+@property (nonatomic, strong) IBOutlet UIProgressView *progressView;
+@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *spinner;
 @end
