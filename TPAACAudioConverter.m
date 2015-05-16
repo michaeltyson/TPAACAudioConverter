@@ -330,8 +330,8 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
         } else {
             NSUInteger length = bufferByteSize;
             [_dataSource AACAudioConverter:self nextBytes:srcBuffer length:&length];
-            numFrames = length / clientFormat.mBytesPerFrame;
-            fillBufList.mBuffers[0].mDataByteSize = length;
+            numFrames = (UInt32)length / clientFormat.mBytesPerFrame;
+            fillBufList.mBuffers[0].mDataByteSize = (UInt32)length;
         }
         
         if ( !numFrames ) {
