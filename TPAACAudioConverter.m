@@ -245,7 +245,7 @@ static inline BOOL _checkResultLite(OSStatus result, const char *operation, cons
         [self performSelectorOnMainThread:@selector(reportErrorAndCleanup:)
                                withObject:[NSError errorWithDomain:TPAACAudioConverterErrorDomain
                                                               code:TPAACAudioConverterFileError
-                                                          userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't open the source file", @"Error message") forKey:NSLocalizedDescriptionKey]]
+                                                          userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"Couldn't open the destination file", @"Error message") forKey:NSLocalizedDescriptionKey]]
                             waitUntilDone:NO];
         _processing = NO;
         return;
